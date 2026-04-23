@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ariff Hakimi — Software Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+
+  <!-- Fixed nav -->
+  <nav class="nav">
+    <a href="#" class="nav-logo" onclick="scrollToPanel(0)">AH.</a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <button class="nav-link" onclick="scrollToPanel(1)">About</button>
+        <button class="nav-link" onclick="scrollToPanel(2)">Skills</button>
+        <button class="nav-link" onclick="scrollToPanel(3)">Work</button>
+        <button class="nav-link" onclick="scrollToPanel(4)">Contact</button>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Progress indicator -->
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <!-- Section dots indicator -->
+  <div class="section-dots" id="sectionDots">
+    <button class="dot active" onclick="scrollToPanel(0)" aria-label="Hero"></button>
+    <button class="dot" onclick="scrollToPanel(1)" aria-label="About"></button>
+    <button class="dot" onclick="scrollToPanel(2)" aria-label="Skills"></button>
+    <button class="dot" onclick="scrollToPanel(3)" aria-label="Projects"></button>
+    <button class="dot" onclick="scrollToPanel(4)" aria-label="Contact"></button>
+  </div>
+
+  <!-- Horizontal scroll wrapper -->
+  <div class="scroll-wrapper" id="scrollWrapper">
+
+    <!-- ─── PANEL 1: HERO ─────────────────────────────────── -->
+    <section class="panel panel-hero" id="panel-0">
+      <div class="panel-inner">
+        <span class="eyebrow">Software Engineer</span>
+        <h1 class="hero-name">
+          <span class="name-line">Ariff</span>
+          <span class="name-line accent-stroke">Hakimi</span>
+        </h1>
+        <p class="hero-sub">
+          I build thoughtful digital products—<br />
+          where <em>clean code</em> meets <em>great design</em>.
+        </p>
+        <div class="scroll-hint">
+          <span class="scroll-hint-text">scroll to explore</span>
+          <div class="scroll-hint-arrow">
+            <div class="arrow-line"></div>
+            <div class="arrow-head">›</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-gif-wrap">
+        <img src="public/heroimg.png" alt="Ariff Hakimi" class="hero-gif" />
+      </div>
+    </section>
+
+    <!-- ─── PANEL 2: ABOUT ────────────────────────────────── -->
+    <section class="panel panel-about" id="panel-1">
+      <div class="panel-inner about-inner">
+        <div class="panel-label">02 / About</div>
+        <h2 class="section-heading">A bit<br />about me.</h2>
+        <div class="about-body">
+          <p>
+            I'm a software engineer passionate about building things that live on the internet.
+            I care deeply about <em>developer experience</em>, <em>performance</em>, and making
+            interfaces that feel as good as they look.
+          </p>
+          <p>
+            Currently exploring the intersections of modern web architecture, AI tooling,
+            and beautifully functional UX.
+          </p>
+          <div class="about-stats">
+            <div class="stat">
+              <span class="stat-num">6+</span>
+              <span class="stat-label">Years coding</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">10+</span>
+              <span class="stat-label">Projects involved</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">∞</span>
+              <span class="stat-label">Curiosity</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Career timeline -->
+      <div class="timeline-wrap">
+        <div class="panel-label">Career</div>
+        <div class="timeline">
+
+          <div class="tl-item" data-index="0">
+            <div class="tl-dot"></div>
+            <div class="tl-content">
+              <span class="tl-period">Sept 2019 – May 2020</span>
+              <h4 class="tl-role">Digital Team Developer <span class="tl-badge">Intern</span></h4>
+              <p class="tl-company">Schlumberger WTA Sdn Bhd</p>
+            </div>
+          </div>
+
+          <div class="tl-item" data-index="1">
+            <div class="tl-dot"></div>
+            <div class="tl-content">
+              <span class="tl-period">May 2021 – Feb 2022</span>
+              <h4 class="tl-role">System Analyst</h4>
+              <p class="tl-company">Independent Data Services (Asia) Sdn Bhd</p>
+            </div>
+          </div>
+
+          <div class="tl-item" data-index="2">
+            <div class="tl-dot"></div>
+            <div class="tl-content">
+              <span class="tl-period">Feb 2022 – Sept 2024</span>
+              <h4 class="tl-role">Software Engineer</h4>
+              <p class="tl-company">Danica Pension</p>
+            </div>
+          </div>
+
+          <div class="tl-item tl-item--active" data-index="3">
+            <div class="tl-dot"></div>
+            <div class="tl-content">
+              <span class="tl-period">Sept 2024 – Present</span>
+              <h4 class="tl-role">Software Engineer <span class="tl-badge">Mendix</span></h4>
+              <p class="tl-company">Orangeleaf Consulting</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Single shared modal, appears to the right -->
+        <div class="tl-modal" id="tlModal">
+          <ul class="tl-modal-list" id="tlModalList"></ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ─── PANEL 3: SKILLS ───────────────────────────────── -->
+    <section class="panel panel-skills" id="panel-2">
+      <div class="panel-inner skills-inner">
+        <div class="panel-label">03 / Skills</div>
+        <h2 class="section-heading">What I<br />work with.</h2>
+        <div class="skills-rows">
+
+          <div class="skill-row">
+            <span class="skill-row-label">Frontend</span>
+            <div class="skill-tags">
+              <span class="skill-tag"><img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg" alt="">React / Next.js</span>
+              <span class="skill-tag"><img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg" alt="">TypeScript</span>
+              <span class="skill-tag"><img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg" alt="">CSS / Tailwind</span>
+              <span class="skill-tag"><img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vuejs/vuejs-original.svg" alt="">Vue.js</span>
+            </div>
+            <span class="skill-count">04</span>
+          </div>
+
+          <div class="skill-row">
+            <span class="skill-row-label">Backend</span>
+            <div class="skill-tags">
+              <span class="skill-tag"><img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg" alt="">Node.js / Express</span>
+              <span class="skill-tag"><img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="">Python / FastAPI</span>
+              <span class="skill-tag">REST APIs</span>
+              <span class="skill-tag"><img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ibmcloud/ibmcloud-original.svg" alt="">Mainframe (COBOL)</span>
+            </div>
+            <span class="skill-count">04</span>
+          </div>
+
+          <div class="skill-row">
+            <span class="skill-row-label">Database</span>
+            <div class="skill-tags">
+              <span class="skill-tag"><img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg" alt="">PostgreSQL</span>
+              <span class="skill-tag"><img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" alt="">MySQL</span>
+              <span class="skill-tag"><img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/microsoftsqlserver/microsoftsqlserver-plain.svg" alt="">MSSQL</span>
+              <span class="skill-tag"><img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/supabase/supabase-original.svg" alt="">Supabase</span>
+            </div>
+            <span class="skill-count">04</span>
+          </div>
+
+          <div class="skill-row">
+            <span class="skill-row-label">Tooling</span>
+            <div class="skill-tags">
+              <span class="skill-tag"><img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg" alt="">Git / GitHub</span>
+              <span class="skill-tag"><img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg" alt="">Docker</span>
+              <span class="skill-tag"><img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original.svg" alt="">AWS / Vercel</span>
+              <span class="skill-tag"><img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/figma/figma-original.svg" alt="">Figma</span>
+              <span class="skill-tag"><img class="skill-logo" src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg" alt="">Linux / Bash</span>
+              <span class="skill-tag"><img class="skill-logo" src="https://cdn.simpleicons.org/mendix" alt="">Mendix</span>
+            </div>
+            <span class="skill-count">06</span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── PANEL 4: PROJECTS ─────────────────────────────── -->
+    <section class="panel panel-projects" id="panel-3">
+      <div class="panel-inner projects-inner">
+        <div class="projects-header">
+          <div>
+            <div class="panel-label">04 / Work</div>
+            <h2 class="section-heading">My<br />projects.</h2>
+          </div>
+          <div class="carousel-controls">
+            <button class="carousel-btn" id="projectsPrev" aria-label="Previous">←</button>
+            <button class="carousel-btn" id="projectsNext" aria-label="Next">→</button>
+          </div>
+        </div>
+        <div class="projects-carousel-wrap" id="projectsWrap">
+        <div class="projects-scroll" id="projectsScroll">
+
+          <a class="project-card" href="https://tempahstudio.com" target="_blank" rel="noopener">
+            <div class="project-card-header">
+              <span class="project-idx">01</span>
+              <span class="project-category">SaaS Platform</span>
+            </div>
+            <h3 class="project-name">Tempah Studio</h3>
+            <p class="project-desc">Founding-engineer-built studio booking SaaS trusted by 50+ SME photography studios and 173k+ customers across Malaysia.</p>
+            <div class="project-stack">
+              <span>React</span><span>PostgreSQL</span><span>REST API</span><span>Webhooks</span><span>Serverless</span><span>Cron Jobs</span>
+            </div>
+            <div class="project-card-footer">
+              <span class="project-domain">tempahstudio.com</span>
+              <span class="project-arrow">↗</span>
+            </div>
+          </a>
+
+          <a class="project-card" href="https://eastscapehomestay.com" target="_blank" rel="noopener">
+            <div class="project-card-header">
+              <span class="project-idx">02</span>
+              <span class="project-category">Booking System</span>
+            </div>
+            <h3 class="project-name">Eastscape Homestay</h3>
+            <p class="project-desc">Full-stack booking management system for a homestay business — handling reservations, availability, and guest coordination.</p>
+            <div class="project-stack">
+              <span>React</span><span>Node.js</span><span>PostgreSQL</span><span>REST API</span>
+            </div>
+            <div class="project-card-footer">
+              <span class="project-domain">eastscapehomestay.com</span>
+              <span class="project-arrow">↗</span>
+            </div>
+          </a>
+
+          <a class="project-card" href="https://fotokonvo.com" target="_blank" rel="noopener">
+            <div class="project-card-header">
+              <span class="project-idx">03</span>
+              <span class="project-category">Booking System</span>
+            </div>
+            <h3 class="project-name">Fotokonvo</h3>
+            <p class="project-desc">Convocation photography booking platform connecting graduates with photographers across university events in Malaysia.</p>
+            <div class="project-stack">
+              <span>React</span><span>Node.js</span><span>PostgreSQL</span><span>REST API</span>
+            </div>
+            <div class="project-card-footer">
+              <span class="project-domain">fotokonvo.com</span>
+              <span class="project-arrow">↗</span>
+            </div>
+          </a>
+
+          <a class="project-card" href="https://bantalkuantan.com" target="_blank" rel="noopener">
+            <div class="project-card-header">
+              <span class="project-idx">04</span>
+              <span class="project-category">E-Commerce</span>
+            </div>
+            <h3 class="project-name">Bantal Kuantan</h3>
+            <p class="project-desc">E-commerce storefront empowering local SMEs in Kuantan with product listings, order management, and online payments.</p>
+            <div class="project-stack">
+              <span>React</span><span>Node.js</span><span>PostgreSQL</span><span>REST API</span>
+            </div>
+            <div class="project-card-footer">
+              <span class="project-domain">bantalkuantan.com</span>
+              <span class="project-arrow">↗</span>
+            </div>
+          </a>
+
+          <a class="project-card" href="https://caristudioraya.com" target="_blank" rel="noopener">
+            <div class="project-card-header">
+              <span class="project-idx">05</span>
+              <span class="project-category">Directory</span>
+            </div>
+            <h3 class="project-name">Cari Studio Raya</h3>
+            <p class="project-desc">Studio discovery platform helping users find and book the nearest photography studio for their Raya photoshoot.</p>
+            <div class="project-stack">
+              <span>Vue.js</span><span>Python</span><span>FastAPI</span><span>PostgreSQL</span>
+            </div>
+            <div class="project-card-footer">
+              <span class="project-domain">caristudioraya.com</span>
+              <span class="project-arrow">↗</span>
+            </div>
+          </a>
+
+          <a class="project-card" href="https://nakkawen.vercel.app" target="_blank" rel="noopener">
+            <div class="project-card-header">
+              <span class="project-idx">06</span>
+              <span class="project-category">Web App</span>
+            </div>
+            <h3 class="project-name">Nakkawen</h3>
+            <p class="project-desc">Digital wedding management platform for couples — centralising vendor coordination, guest lists, budgets, and event timelines.</p>
+            <div class="project-stack">
+              <span>Next.js</span><span>TypeScript</span><span>Supabase</span>
+            </div>
+            <div class="project-card-footer">
+              <span class="project-domain">nakkawen.vercel.app</span>
+              <span class="project-arrow">↗</span>
+            </div>
+          </a>
+
+          <a class="project-card" href="https://nakraya.vercel.app" target="_blank" rel="noopener">
+            <div class="project-card-header">
+              <span class="project-idx">07</span>
+              <span class="project-category">Digital Card</span>
+            </div>
+            <h3 class="project-name">Nakraya</h3>
+            <p class="project-desc">Shareable digital Raya greeting card platform — send personalised festive messages with beautifully crafted designs.</p>
+            <div class="project-stack">
+              <span>React</span><span>TypeScript</span><span>Vercel</span>
+            </div>
+            <div class="project-card-footer">
+              <span class="project-domain">nakraya.vercel.app</span>
+              <span class="project-arrow">↗</span>
+            </div>
+          </a>
+
+        </div>
+        </div><!-- /projects-carousel-wrap -->
+      </div>
+    </section>
+
+    <!-- ─── PANEL 5: CONTACT ──────────────────────────────── -->
+    <section class="panel panel-contact" id="panel-4">
+      <div class="panel-inner">
+        <div class="panel-label">05 / Contact</div>
+        <h2 class="section-heading contact-heading">Let's build<br />something<br /><em>great</em>.</h2>
+        <p class="contact-desc">
+          Open to new opportunities, collaborations,<br />and interesting conversations.
+        </p>
+        <a href="mailto:ariffhakimichik@gmail.com" class="contact-email">ariffhakimichik@gmail.com / +60 11-2994 7089</a>
+        <div class="social-row">
+          <a href="https://github.com/Ariffkmy" class="social-link" target="_blank" rel="noopener">GitHub</a>
+          <span class="social-sep">·</span>
+          <a href="https://www.linkedin.com/in/ariff-hakimi-chik-3029311b0/" class="social-link" target="_blank" rel="noopener">LinkedIn</a>
+          <span class="social-sep">·</span>
+          <a href="https://api.whatsapp.com/send/?phone=%2B601129947089&text&type=phone_number&app_absent=0" class="social-link" target="_blank" rel="noopener">Whatsapp</a>
+        </div>
+        <p class="footer-copy">© 2023 Ariff Hakimi. Crafted with care.</p>
+      </div>
+      <div class="panel-deco">AH</div>
+    </section>
+
+  </div><!-- /scroll-wrapper -->
+
+  <script src="script.js"></script>
+</body>
+</html>
