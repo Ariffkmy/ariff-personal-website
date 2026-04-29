@@ -1047,17 +1047,167 @@ body.cursor-hover .cursor {
 }
 
 /* =============================================
-   RESPONSIVE — smaller screens
+   RESPONSIVE — Mobile
    ============================================= */
 @media (max-width: 768px) {
-  .nav-links { display: none; }
+
+  /* ── Allow normal vertical scrolling ── */
+  html {
+    overflow: auto;
+    overflow-x: hidden;
+    height: auto;
+  }
+
+  body {
+    overflow: auto;
+    overflow-x: hidden;
+    height: auto;
+    cursor: auto;
+  }
+
+  /* ── Hide custom cursor on touch devices ── */
+  .cursor,
+  .cursor-dot { display: none; }
+
+  button { cursor: pointer; }
+
+  /* ── Switch wrapper to vertical stack ── */
+  .scroll-wrapper {
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .panel {
+    width: 100%;
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  /* ── Panel inner padding ── */
+  .panel-inner {
+    padding: 5rem 1.5rem 2.5rem;
+  }
+
+  /* ── Nav ── */
+  .nav {
+    padding: 1rem 1.5rem;
+    background: var(--bg);
+  }
+
+  .nav-links    { display: none; }
   .section-dots { display: none; }
+  .progress-track { display: none; }
+
+  /* ── Hero ── */
+  .panel-hero {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+
+  .panel-hero .panel-inner {
+    height: auto;
+    width: 100%;
+  }
+
+  .hero-name {
+    font-size: clamp(3.5rem, 16vw, 7rem);
+  }
+
+  .hero-sub { max-width: 100%; }
+
+  .scroll-hint { display: none; }
+
+  .hero-gif-wrap {
+    position: static;
+    transform: none;
+    width: 70%;
+    max-width: 260px;
+    margin: 0 auto 2.5rem;
+  }
+
+  /* ── About ── */
+  .panel-about {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .about-inner  { max-width: 100%; }
+
+  .about-stats  { gap: 1.5rem; }
+
+  .timeline-wrap {
+    border-left: none;
+    border-top: 1px solid var(--border);
+    padding: 2rem 1.5rem 3rem;
+    min-width: unset;
+    height: auto;
+    padding-top: 2rem;
+  }
+
+  /* Hover modal doesn't work on touch — hide it */
+  .tl-modal { display: none; }
+
+  /* ── Skills ── */
   .skills-inner { max-width: 100%; }
-  .skill-row { flex-wrap: wrap; gap: 0.8rem; padding-left: 0; border-left: none; }
+
+  .skill-row {
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    padding-left: 0.8rem;
+    border-left: none;
+  }
+
   .skill-row-label { min-width: 100%; }
-  .skill-count { display: none; }
-  .project-card { width: 260px; }
+  .skill-count     { display: none; }
+
+  /* ── Projects ── */
+  .projects-inner { width: 100%; }
+
+  .project-card   { width: 260px; }
+
   .projects-scroll { padding-bottom: 0.5rem; }
-  .about-stats { gap: 1.5rem; }
-  .hero-name { font-size: clamp(4rem, 18vw, 8rem); }
+
+  /* ── Contact ── */
+  .panel-contact {
+    align-items: stretch;
+  }
+
+  .panel-contact .panel-inner {
+    height: auto;
+    padding-bottom: 4rem;
+  }
+
+  .contact-heading {
+    font-size: clamp(2.5rem, 10vw, 4rem);
+  }
+
+  .contact-email {
+    font-size: clamp(0.8rem, 3.5vw, 1.1rem);
+    word-break: break-word;
+  }
+
+  .panel-deco { display: none; }
+
+  .footer-copy {
+    position: static;
+    display: block;
+    margin-top: 2rem;
+    left: auto;
+    bottom: auto;
+  }
+
+  /* ── Panel animations — vertical enter instead of horizontal ── */
+  .panel-inner {
+    transform: translateY(20px);
+  }
+
+  .panel.visible .panel-inner {
+    transform: translateY(0);
+  }
 }

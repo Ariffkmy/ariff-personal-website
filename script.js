@@ -36,34 +36,40 @@ function currentPanel() {
   return Math.round(currentX / PANEL_WIDTH());
 }
 
+function isMobile() {
+  return window.innerWidth <= 768;
+}
+
 // ─── ANIMATION LOOP ──────────────────────────
 function tick() {
-  // Smooth lerp toward target
-  currentX = lerp(currentX, targetX, 0.085);
+  if (!isMobile()) {
+    // Smooth lerp toward target
+    currentX = lerp(currentX, targetX, 0.085);
 
-  // Snap when close enough to avoid jitter
-  if (Math.abs(currentX - targetX) < 0.5) {
-    currentX = targetX;
+    // Snap when close enough to avoid jitter
+    if (Math.abs(currentX - targetX) < 0.5) {
+      currentX = targetX;
+    }
+
+    // Move the wrapper via transform (GPU-composited)
+    wrapper.style.transform = `translateX(${-currentX}px)`;
+
+    // Progress bar
+    const pct = MAX_SCROLL() > 0 ? (currentX / MAX_SCROLL()) * 100 : 0;
+    progressFill.style.width = pct.toFixed(2) + '%';
+
+    // Active dot
+    const idx = currentPanel();
+    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+
+    // Panel visibility for animations
+    panels.forEach((p, i) => {
+      const panelX  = i * PANEL_WIDTH();
+      const distPx  = Math.abs(currentX - panelX);
+      const visible = distPx < PANEL_WIDTH() * 0.5;
+      p.classList.toggle('visible', visible);
+    });
   }
-
-  // Move the wrapper via transform (GPU-composited)
-  wrapper.style.transform = `translateX(${-currentX}px)`;
-
-  // Progress bar
-  const pct = MAX_SCROLL() > 0 ? (currentX / MAX_SCROLL()) * 100 : 0;
-  progressFill.style.width = pct.toFixed(2) + '%';
-
-  // Active dot
-  const idx = currentPanel();
-  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-
-  // Panel visibility for animations
-  panels.forEach((p, i) => {
-    const panelX  = i * PANEL_WIDTH();
-    const distPx  = Math.abs(currentX - panelX);
-    const visible = distPx < PANEL_WIDTH() * 0.5;
-    p.classList.toggle('visible', visible);
-  });
 
   rafId = requestAnimationFrame(tick);
 }
@@ -73,6 +79,7 @@ let wheelAccum = 0;
 let wheelTimer = null;
 
 window.addEventListener('wheel', (e) => {
+  if (isMobile()) return;
   e.preventDefault();
 
   // Combine both axes so trackpad pans and scroll wheels both work
@@ -150,6 +157,11 @@ window.addEventListener('keydown', (e) => {
 
 // ─── JUMP TO PANEL ───────────────────────────
 function scrollToPanel(index) {
+  if (isMobile()) {
+    const panel = document.getElementById(`panel-${index}`);
+    if (panel) panel.scrollIntoView({ behavior: 'smooth' });
+    return;
+  }
   targetX = clamp(index * PANEL_WIDTH(), 0, MAX_SCROLL());
 }
 
@@ -271,6 +283,16 @@ const careerData = [
 // ─── INIT ────────────────────────────────────
 // Mark first panel visible immediately
 panels[0].classList.add('visible');
+
+// Mobile: use IntersectionObserver for panel fade-in instead of horizontal scroll logic
+const panelObserver = new IntersectionObserver((entries) => {
+  if (!isMobile()) return;
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+
+panels.forEach(p => panelObserver.observe(p));
 
 // Kick off both animation loops
 tick();
