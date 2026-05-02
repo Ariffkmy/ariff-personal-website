@@ -1127,18 +1127,19 @@ body.cursor-hover .cursor {
 
   .hero-sub { max-width: 100%; }
 
-  /* Show top half of cartoon at bottom of hero panel */
+  /* Move cartoon to bottom of page on mobile */
   .hero-gif-wrap {
     display: block;
-    position: absolute;
+    position: fixed;
     bottom: 0;
     right: 1.5rem;
     width: 55vw;
     max-width: 260px;
-    /* image is 1:1 square — half of displayed height shows the top half */
-    height: 27.5vw;
-    max-height: 130px;
+    /* Show full image at bottom of viewport */
+    height: 55vw;
+    max-height: 260px;
     overflow: hidden;
+    z-index: 100;
   }
 
   /* Swap scroll hint text */
