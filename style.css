@@ -404,6 +404,8 @@ body.cursor-hover .cursor {
   text-transform: uppercase;
 }
 
+.scroll-hint-mobile { display: none; }
+
 .scroll-hint-arrow {
   display: flex;
   align-items: center;
@@ -1051,41 +1053,16 @@ body.cursor-hover .cursor {
    ============================================= */
 @media (max-width: 768px) {
 
-  /* ── Allow normal vertical scrolling ── */
-  html {
-    overflow: auto;
-    overflow-x: hidden;
-    height: auto;
-  }
-
-  body {
-    overflow: auto;
-    overflow-x: hidden;
-    height: auto;
-    cursor: auto;
-  }
-
-  /* ── Hide custom cursor on touch devices ── */
+  /* ── Disable custom cursor on touch devices ── */
   .cursor,
   .cursor-dot { display: none; }
 
+  body { cursor: auto; }
   button { cursor: pointer; }
 
-  /* ── Switch wrapper to vertical stack ── */
-  .scroll-wrapper {
-    flex-direction: column;
-    width: 100%;
-    height: auto;
-    transform: none !important;
-    will-change: auto;
-  }
-
+  /* ── Allow vertical overflow within each panel ── */
   .panel {
-    width: 100%;
-    height: auto;
-    min-height: 100vh;
-    min-height: 100dvh;
-    overflow: visible;
+    overflow-y: auto;
   }
 
   /* ── Panel inner padding ── */
@@ -1099,9 +1076,13 @@ body.cursor-hover .cursor {
     background: var(--bg);
   }
 
-  .nav-links    { display: none; }
-  .section-dots { display: none; }
+  .nav-links      { display: none; }
   .progress-track { display: none; }
+
+  /* ── Section dots — keep for horizontal nav indicator ── */
+  .section-dots {
+    right: 1rem;
+  }
 
   /* ── Hero ── */
   .panel-hero {
@@ -1121,15 +1102,12 @@ body.cursor-hover .cursor {
 
   .hero-sub { max-width: 100%; }
 
-  .scroll-hint { display: none; }
+  /* Hide gif so hero fits in one screen height */
+  .hero-gif-wrap { display: none; }
 
-  .hero-gif-wrap {
-    position: static;
-    transform: none;
-    width: 70%;
-    max-width: 260px;
-    margin: 0 auto 2.5rem;
-  }
+  /* Swap scroll hint text */
+  .scroll-hint-desktop { display: none; }
+  .scroll-hint-mobile  { display: inline; }
 
   /* ── About ── */
   .panel-about {
@@ -1200,15 +1178,6 @@ body.cursor-hover .cursor {
     margin-top: 2rem;
     left: auto;
     bottom: auto;
-  }
-
-  /* ── Panel animations — vertical enter instead of horizontal ── */
-  .panel-inner {
-    transform: translateY(20px);
-  }
-
-  .panel.visible .panel-inner {
-    transform: translateY(0);
   }
 }
 
