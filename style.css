@@ -1060,9 +1060,24 @@ body.cursor-hover .cursor {
   body { cursor: auto; }
   button { cursor: pointer; }
 
+  /* ── Native horizontal scroll on mobile ── */
+  .scroll-wrapper {
+    width: 100vw;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .scroll-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+
   /* ── Allow vertical overflow within each panel ── */
   .panel {
     overflow-y: auto;
+    scroll-snap-align: start;
   }
 
   /* ── Panel inner padding ── */

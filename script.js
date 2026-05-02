@@ -42,27 +42,25 @@ function isMobile() {
 
 // ─── ANIMATION LOOP ──────────────────────────
 function tick() {
-  currentX = lerp(currentX, targetX, 0.085);
-
-  if (Math.abs(currentX - targetX) < 0.5) {
-    currentX = targetX;
-  }
-
-  wrapper.style.transform = `translateX(${-currentX}px)`;
+  // On mobile, native CSS scroll handles position — read scrollLeft for UI sync
+  const effectiveX = isMobile() ? wrapper.scrollLeft : currentX;
 
   if (!isMobile()) {
+    currentX = lerp(currentX, targetX, 0.085);
+    if (Math.abs(currentX - targetX) < 0.5) {
+      currentX = targetX;
+    }
+    wrapper.style.transform = `translateX(${-currentX}px)`;
     const pct = MAX_SCROLL() > 0 ? (currentX / MAX_SCROLL()) * 100 : 0;
     progressFill.style.width = pct.toFixed(2) + '%';
   }
 
-  const idx = currentPanel();
+  const idx = Math.round(effectiveX / PANEL_WIDTH());
   dots.forEach((d, i) => d.classList.toggle('active', i === idx));
 
   panels.forEach((p, i) => {
-    const panelX  = i * PANEL_WIDTH();
-    const distPx  = Math.abs(currentX - panelX);
-    const visible = distPx < PANEL_WIDTH() * 0.5;
-    p.classList.toggle('visible', visible);
+    const distPx  = Math.abs(effectiveX - i * PANEL_WIDTH());
+    p.classList.toggle('visible', distPx < PANEL_WIDTH() * 0.5);
   });
 
   rafId = requestAnimationFrame(tick);
@@ -130,6 +128,9 @@ window.addEventListener('touchstart', (e) => {
 }, { passive: true });
 
 window.addEventListener('touchmove', (e) => {
+  // On mobile, native CSS scroll-snap handles all swiping
+  if (isMobile()) return;
+
   const dx = lastTouchX - e.touches[0].clientX;
   const dy = lastTouchY - e.touches[0].clientY;
 
@@ -166,6 +167,10 @@ window.addEventListener('keydown', (e) => {
 
 // ─── JUMP TO PANEL ───────────────────────────
 function scrollToPanel(index) {
+  if (isMobile()) {
+    wrapper.scrollLeft = index * window.innerWidth;
+    return;
+  }
   targetX = clamp(index * PANEL_WIDTH(), 0, MAX_SCROLL());
 }
 
@@ -231,7 +236,10 @@ document.addEventListener('mouseenter', () => {
 
 // ─── HANDLE RESIZE ───────────────────────────
 window.addEventListener('resize', () => {
-  // Re-clamp scroll position to new window size
+  if (isMobile()) {
+    // Clear any JS-applied transform so CSS scroll takes over
+    wrapper.style.transform = 'none';
+  }
   targetX  = clamp(targetX, 0, MAX_SCROLL());
   currentX = clamp(currentX, 0, MAX_SCROLL());
 });
@@ -285,6 +293,9 @@ const careerData = [
 })();
 
 // ─── INIT ────────────────────────────────────
+if (isMobile()) {
+  wrapper.style.transform = 'none';
+}
 panels[0].classList.add('visible');
 
 // Kick off both animation loops
