@@ -1078,6 +1078,7 @@ body.cursor-hover .cursor {
 
   /* ── Allow vertical overflow within each panel ── */
   .panel {
+    align-items: flex-start; /* prevent top content being hidden when panel overflows */
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     scroll-snap-align: start;
