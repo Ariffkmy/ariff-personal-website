@@ -42,34 +42,28 @@ function isMobile() {
 
 // ─── ANIMATION LOOP ──────────────────────────
 function tick() {
+  currentX = lerp(currentX, targetX, 0.085);
+
+  if (Math.abs(currentX - targetX) < 0.5) {
+    currentX = targetX;
+  }
+
+  wrapper.style.transform = `translateX(${-currentX}px)`;
+
   if (!isMobile()) {
-    // Smooth lerp toward target
-    currentX = lerp(currentX, targetX, 0.085);
-
-    // Snap when close enough to avoid jitter
-    if (Math.abs(currentX - targetX) < 0.5) {
-      currentX = targetX;
-    }
-
-    // Move the wrapper via transform (GPU-composited)
-    wrapper.style.transform = `translateX(${-currentX}px)`;
-
-    // Progress bar
     const pct = MAX_SCROLL() > 0 ? (currentX / MAX_SCROLL()) * 100 : 0;
     progressFill.style.width = pct.toFixed(2) + '%';
-
-    // Active dot
-    const idx = currentPanel();
-    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-
-    // Panel visibility for animations
-    panels.forEach((p, i) => {
-      const panelX  = i * PANEL_WIDTH();
-      const distPx  = Math.abs(currentX - panelX);
-      const visible = distPx < PANEL_WIDTH() * 0.5;
-      p.classList.toggle('visible', visible);
-    });
   }
+
+  const idx = currentPanel();
+  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+
+  panels.forEach((p, i) => {
+    const panelX  = i * PANEL_WIDTH();
+    const distPx  = Math.abs(currentX - panelX);
+    const visible = distPx < PANEL_WIDTH() * 0.5;
+    p.classList.toggle('visible', visible);
+  });
 
   rafId = requestAnimationFrame(tick);
 }
@@ -121,26 +115,41 @@ window.addEventListener('wheel', (e) => {
 })();
 
 // ─── TOUCH / SWIPE ───────────────────────────
-let touchStartX = 0;
-let touchStartY = 0;
-let lastTouchX  = 0;
-let lastTouchY  = 0;
+let touchStartX  = 0;
+let touchStartY  = 0;
+let lastTouchX   = 0;
+let lastTouchY   = 0;
+let swipeAxis    = null;   // 'h' | 'v' | null — locked on first movement
+let touchTarget  = null;
 
 window.addEventListener('touchstart', (e) => {
   touchStartX = lastTouchX = e.touches[0].clientX;
   touchStartY = lastTouchY = e.touches[0].clientY;
+  swipeAxis   = null;
+  touchTarget = e.target;
 }, { passive: true });
 
 window.addEventListener('touchmove', (e) => {
   const dx = lastTouchX - e.touches[0].clientX;
   const dy = lastTouchY - e.touches[0].clientY;
+
   lastTouchX = e.touches[0].clientX;
   lastTouchY = e.touches[0].clientY;
 
-  // Treat vertical swipe as horizontal navigation too
-  const delta = Math.abs(dx) >= Math.abs(dy) ? dx : dy;
-  targetX = clamp(targetX + delta, 0, MAX_SCROLL());
-}, { passive: true });
+  // Let the projects carousel handle its own horizontal scroll
+  if (touchTarget && touchTarget.closest('.projects-scroll')) return;
+
+  // Lock swipe axis on first meaningful movement
+  if (swipeAxis === null && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
+    swipeAxis = Math.abs(dx) >= Math.abs(dy) ? 'h' : 'v';
+  }
+
+  if (swipeAxis === 'h') {
+    e.preventDefault();   // stop browser from scrolling the page horizontally
+    targetX = clamp(targetX + dx, 0, MAX_SCROLL());
+  }
+  // 'v' swipes bubble up so the browser scrolls within the panel
+}, { passive: false });
 
 // ─── KEYBOARD NAVIGATION ─────────────────────
 window.addEventListener('keydown', (e) => {
@@ -157,11 +166,6 @@ window.addEventListener('keydown', (e) => {
 
 // ─── JUMP TO PANEL ───────────────────────────
 function scrollToPanel(index) {
-  if (isMobile()) {
-    const panel = document.getElementById(`panel-${index}`);
-    if (panel) panel.scrollIntoView({ behavior: 'smooth' });
-    return;
-  }
   targetX = clamp(index * PANEL_WIDTH(), 0, MAX_SCROLL());
 }
 
@@ -281,18 +285,7 @@ const careerData = [
 })();
 
 // ─── INIT ────────────────────────────────────
-// Mark first panel visible immediately
 panels[0].classList.add('visible');
-
-// Mobile: use IntersectionObserver for panel fade-in instead of horizontal scroll logic
-const panelObserver = new IntersectionObserver((entries) => {
-  if (!isMobile()) return;
-  entries.forEach(entry => {
-    if (entry.isIntersecting) entry.target.classList.add('visible');
-  });
-}, { threshold: 0.1 });
-
-panels.forEach(p => panelObserver.observe(p));
 
 // Kick off both animation loops
 tick();
