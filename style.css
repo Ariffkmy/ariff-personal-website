@@ -1102,8 +1102,16 @@ body.cursor-hover .cursor {
 
   .hero-sub { max-width: 100%; }
 
-  /* Hide gif so hero fits in one screen height */
-  .hero-gif-wrap { display: none; }
+  /* Show gif pinned to bottom of hero panel */
+  .hero-gif-wrap {
+    display: block;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    top: auto;
+    transform: none;
+    width: clamp(160px, 48vw, 260px);
+  }
 
   /* Swap scroll hint text */
   .scroll-hint-desktop { display: none; }
