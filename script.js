@@ -168,11 +168,23 @@ window.addEventListener('keydown', (e) => {
 // ─── JUMP TO PANEL ───────────────────────────
 function scrollToPanel(index) {
   if (isMobile()) {
+    if (panels[index]) panels[index].scrollTop = 0;
     wrapper.scrollLeft = index * window.innerWidth;
     return;
   }
   targetX = clamp(index * PANEL_WIDTH(), 0, MAX_SCROLL());
 }
+
+// Reset vertical scroll when the user swipes to a new panel via native scroll-snap
+let _panelScrollTimer = null;
+wrapper.addEventListener('scroll', () => {
+  if (!isMobile()) return;
+  clearTimeout(_panelScrollTimer);
+  _panelScrollTimer = setTimeout(() => {
+    const idx = Math.round(wrapper.scrollLeft / window.innerWidth);
+    if (panels[idx]) panels[idx].scrollTop = 0;
+  }, 120);
+}, { passive: true });
 
 // Expose globally for onclick handlers in HTML
 window.scrollToPanel = scrollToPanel;
