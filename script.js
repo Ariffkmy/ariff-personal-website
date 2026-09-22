@@ -5,7 +5,6 @@
 'use strict';
 
 // ─── ELEMENTS ────────────────────────────────
-const wrapper     = document.getElementById('scrollWrapper');
 const progressFill = document.getElementById('progressFill');
 const themeToggle = document.getElementById('themeToggle');
 const cursor      = document.getElementById('cursor');
@@ -14,75 +13,40 @@ const dots        = document.querySelectorAll('.dot');
 const panels      = document.querySelectorAll('.panel');
 const html        = document.documentElement;
 
-const PANEL_COUNT = panels.length;          // 5
-const PANEL_WIDTH = () => window.innerWidth;
-const MAX_SCROLL  = () => PANEL_WIDTH() * (PANEL_COUNT - 1);
-
-// ─── STATE ───────────────────────────────────
-let targetX  = 0;    // where we want to be
-let currentX = 0;    // where we are (interpolated)
-let rafId    = null;
-
 // ─── UTILS ───────────────────────────────────
 function lerp(a, b, t) {
   return a + (b - a) * t;
 }
 
-function clamp(v, min, max) {
-  return Math.min(Math.max(v, min), max);
-}
+// ─── SCROLL PROGRESS & ACTIVE DOT ────────────
+function updateScrollUI() {
+  const maxScroll = html.scrollHeight - window.innerHeight;
+  const pct = maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0;
+  progressFill.style.width = pct.toFixed(2) + '%';
 
-function currentPanel() {
-  return Math.round(currentX / PANEL_WIDTH());
-}
-
-function isMobile() {
-  return window.innerWidth <= 768;
-}
-
-// ─── ANIMATION LOOP ──────────────────────────
-function tick() {
-  // On mobile, native CSS scroll handles position — read scrollLeft for UI sync
-  const effectiveX = isMobile() ? wrapper.scrollLeft : currentX;
-
-  if (!isMobile()) {
-    currentX = lerp(currentX, targetX, 0.085);
-    if (Math.abs(currentX - targetX) < 0.5) {
-      currentX = targetX;
-    }
-    wrapper.style.transform = `translateX(${-currentX}px)`;
-    const pct = MAX_SCROLL() > 0 ? (currentX / MAX_SCROLL()) * 100 : 0;
-    progressFill.style.width = pct.toFixed(2) + '%';
-  }
-
-  const idx = Math.round(effectiveX / PANEL_WIDTH());
-  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-
+  // Active section = the one crossing the middle of the viewport
+  const mid = window.innerHeight / 2;
+  let idx = 0;
   panels.forEach((p, i) => {
-    const distPx  = Math.abs(effectiveX - i * PANEL_WIDTH());
-    p.classList.toggle('visible', distPx < PANEL_WIDTH() * 0.5);
+    if (p.getBoundingClientRect().top <= mid) idx = i;
   });
-
-  rafId = requestAnimationFrame(tick);
+  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
 }
 
-// ─── SCROLL HANDLING ─────────────────────────
-let wheelAccum = 0;
-let wheelTimer = null;
+window.addEventListener('scroll', updateScrollUI, { passive: true });
+window.addEventListener('resize', updateScrollUI);
 
-window.addEventListener('wheel', (e) => {
-  if (isMobile()) return;
-  e.preventDefault();
+// ─── REVEAL SECTIONS ON SCROLL ───────────────
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
 
-  // Combine both axes so trackpad pans and scroll wheels both work
-  wheelAccum += e.deltaY + e.deltaX;
-
-  targetX = clamp(targetX + e.deltaY + e.deltaX, 0, MAX_SCROLL());
-
-  // Clear accumulator after gesture ends
-  clearTimeout(wheelTimer);
-  wheelTimer = setTimeout(() => { wheelAccum = 0; }, 200);
-}, { passive: false });
+panels.forEach((p) => revealObserver.observe(p));
 
 // ─── PROJECT CAROUSEL BUTTONS ────────────────
 (function () {
@@ -112,79 +76,10 @@ window.addEventListener('wheel', (e) => {
   });
 })();
 
-// ─── TOUCH / SWIPE ───────────────────────────
-let touchStartX  = 0;
-let touchStartY  = 0;
-let lastTouchX   = 0;
-let lastTouchY   = 0;
-let swipeAxis    = null;   // 'h' | 'v' | null — locked on first movement
-let touchTarget  = null;
-
-window.addEventListener('touchstart', (e) => {
-  touchStartX = lastTouchX = e.touches[0].clientX;
-  touchStartY = lastTouchY = e.touches[0].clientY;
-  swipeAxis   = null;
-  touchTarget = e.target;
-}, { passive: true });
-
-window.addEventListener('touchmove', (e) => {
-  // On mobile, native CSS scroll-snap handles all swiping
-  if (isMobile()) return;
-
-  const dx = lastTouchX - e.touches[0].clientX;
-  const dy = lastTouchY - e.touches[0].clientY;
-
-  lastTouchX = e.touches[0].clientX;
-  lastTouchY = e.touches[0].clientY;
-
-  // Let the projects carousel handle its own horizontal scroll
-  if (touchTarget && touchTarget.closest('.projects-scroll')) return;
-
-  // Lock swipe axis on first meaningful movement
-  if (swipeAxis === null && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
-    swipeAxis = Math.abs(dx) >= Math.abs(dy) ? 'h' : 'v';
-  }
-
-  if (swipeAxis === 'h') {
-    e.preventDefault();   // stop browser from scrolling the page horizontally
-    targetX = clamp(targetX + dx, 0, MAX_SCROLL());
-  }
-  // 'v' swipes bubble up so the browser scrolls within the panel
-}, { passive: false });
-
-// ─── KEYBOARD NAVIGATION ─────────────────────
-window.addEventListener('keydown', (e) => {
-  const step = PANEL_WIDTH();
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-    e.preventDefault();
-    targetX = clamp(targetX + step, 0, MAX_SCROLL());
-  }
-  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-    e.preventDefault();
-    targetX = clamp(targetX - step, 0, MAX_SCROLL());
-  }
-});
-
 // ─── JUMP TO PANEL ───────────────────────────
 function scrollToPanel(index) {
-  if (isMobile()) {
-    if (panels[index]) panels[index].scrollTop = 0;
-    wrapper.scrollLeft = index * window.innerWidth;
-    return;
-  }
-  targetX = clamp(index * PANEL_WIDTH(), 0, MAX_SCROLL());
+  if (panels[index]) panels[index].scrollIntoView({ behavior: 'smooth' });
 }
-
-// Reset vertical scroll when the user swipes to a new panel via native scroll-snap
-let _panelScrollTimer = null;
-wrapper.addEventListener('scroll', () => {
-  if (!isMobile()) return;
-  clearTimeout(_panelScrollTimer);
-  _panelScrollTimer = setTimeout(() => {
-    const idx = Math.round(wrapper.scrollLeft / window.innerWidth);
-    if (panels[idx]) panels[idx].scrollTop = 0;
-  }, 120);
-}, { passive: true });
 
 // Expose globally for onclick handlers in HTML
 window.scrollToPanel = scrollToPanel;
@@ -246,16 +141,6 @@ document.addEventListener('mouseenter', () => {
   cursorDot.style.opacity = '1';
 });
 
-// ─── HANDLE RESIZE ───────────────────────────
-window.addEventListener('resize', () => {
-  if (isMobile()) {
-    // Clear any JS-applied transform so CSS scroll takes over
-    wrapper.style.transform = 'none';
-  }
-  targetX  = clamp(targetX, 0, MAX_SCROLL());
-  currentX = clamp(currentX, 0, MAX_SCROLL());
-});
-
 
 // ─── CAREER TIMELINE MODAL ───────────────────
 const careerData = [
@@ -305,11 +190,6 @@ const careerData = [
 })();
 
 // ─── INIT ────────────────────────────────────
-if (isMobile()) {
-  wrapper.style.transform = 'none';
-}
 panels[0].classList.add('visible');
-
-// Kick off both animation loops
-tick();
+updateScrollUI();
 animateCursor();
