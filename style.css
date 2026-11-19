@@ -359,8 +359,33 @@ body.cursor-hover .cursor {
   -webkit-text-stroke-color: transparent;
 }
 
-/* ─── HERO GIF ─── */
-/* Hero GIF removed from landing page */
+/* ─── HERO PORTRAIT ─── */
+/* Bust is cropped at the bottom, so it sits flush on the panel's bottom edge */
+.hero-portrait {
+  position: absolute;
+  right: clamp(2rem, 6vw, 7rem);
+  bottom: 0;
+  z-index: 1;
+  width: clamp(260px, 30vw, 460px);
+  height: auto;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.9s var(--ease-out) 0.15s,
+              transform 0.9s var(--ease-out) 0.15s;
+}
+
+.panel.visible .hero-portrait {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Tablet widths: shrink and tuck right so it clears the giant name */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .hero-portrait { width: 26vw; right: 1.5rem; }
+}
 
 .hero-sub {
   font-size: clamp(1rem, 1.8vw, 1.2rem);
@@ -1149,7 +1174,13 @@ body.cursor-hover .cursor {
 
   .hero-sub { max-width: 100%; }
 
-  /* Cartoon removed from landing page */
+  /* Portrait: in normal flow below the hero text, sitting on the bottom edge */
+  .hero-portrait {
+    position: static;
+    align-self: center;
+    width: min(62vw, 260px);
+    margin-top: -2rem;
+  }
 
   /* ── About ── */
   .panel-about {
