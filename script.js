@@ -49,14 +49,18 @@ const revealObserver = new IntersectionObserver((entries) => {
 panels.forEach((p) => revealObserver.observe(p));
 
 // ─── PROJECT CAROUSEL BUTTONS ────────────────
-(function () {
-  const wrap    = document.getElementById('projectsWrap');
-  const scroll  = document.getElementById('projectsScroll');
-  const btnPrev = document.getElementById('projectsPrev');
-  const btnNext = document.getElementById('projectsNext');
-  if (!wrap || !scroll || !btnPrev || !btnNext) return;
+// One carousel per project group ([data-carousel])
+document.querySelectorAll('[data-carousel]').forEach((group) => {
+  const wrap   = group.querySelector('.projects-carousel-wrap');
+  const scroll = group.querySelector('.projects-scroll');
+  if (!wrap || !scroll) return;
 
-  const STEP = 300 + 19; // card width + gap
+  // Step = one card width + gap (measured, so it also works at mobile card widths)
+  function step() {
+    const card = scroll.querySelector('.project-card');
+    const gap  = parseFloat(getComputedStyle(scroll).columnGap) || 0;
+    return card ? card.offsetWidth + gap : 300;
+  }
 
   function updateFades() {
     const { scrollLeft, scrollWidth, clientWidth } = scroll;
@@ -65,16 +69,15 @@ panels.forEach((p) => revealObserver.observe(p));
   }
 
   scroll.addEventListener('scroll', updateFades, { passive: true });
+  window.addEventListener('resize', updateFades, { passive: true });
   updateFades(); // set initial state
 
-  btnNext.addEventListener('click', () => {
-    scroll.scrollBy({ left: STEP, behavior: 'smooth' });
+  group.querySelectorAll('.carousel-btn[data-dir]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      scroll.scrollBy({ left: step() * Number(btn.dataset.dir), behavior: 'smooth' });
+    });
   });
-
-  btnPrev.addEventListener('click', () => {
-    scroll.scrollBy({ left: -STEP, behavior: 'smooth' });
-  });
-})();
+});
 
 // ─── JUMP TO PANEL ───────────────────────────
 function scrollToPanel(index) {

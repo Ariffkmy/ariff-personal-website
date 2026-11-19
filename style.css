@@ -736,6 +736,69 @@ body.cursor-hover .cursor {
   margin-bottom: 0;
 }
 
+/* ── Project groups (Enterprise / Freelance) ── */
+.project-group + .project-group {
+  margin-top: 2.8rem;
+}
+
+.project-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.project-group-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.project-group-idx {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+}
+
+.project-group-title h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.project-group-meta {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.project-badge {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  color: var(--fg-muted);
+  border: 1px solid var(--border);
+  padding: 0.1rem 0.45rem;
+  border-radius: 2rem;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.project-card--enterprise:hover .project-badge {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+}
+
+.project-card--enterprise:hover .project-domain {
+  color: var(--accent);
+}
+
 .carousel-controls {
   display: flex;
   gap: 0.5rem;
@@ -808,7 +871,7 @@ body.cursor-hover .cursor {
 .project-card {
   flex-shrink: 0;
   width: 300px;
-  height: 360px;
+  min-height: 360px;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 1.2rem;
