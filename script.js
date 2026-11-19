@@ -1,151 +1,51 @@
 /* =============================================
-   ARIFF HAKIMI — PORTFOLIO SCRIPT
+   ARIFF HAKIMI, PORTFOLIO SCRIPT
    ============================================= */
 
 'use strict';
 
 // ─── ELEMENTS ────────────────────────────────
 const progressFill = document.getElementById('progressFill');
-const themeToggle = document.getElementById('themeToggle');
-const cursor      = document.getElementById('cursor');
-const cursorDot   = document.getElementById('cursorDot');
-const dots        = document.querySelectorAll('.dot');
-const panels      = document.querySelectorAll('.panel');
-const html        = document.documentElement;
+const themeToggle  = document.getElementById('themeToggle');
+const panels       = document.querySelectorAll('.panel');
+const html         = document.documentElement;
 
-// ─── UTILS ───────────────────────────────────
-function lerp(a, b, t) {
-  return a + (b - a) * t;
-}
-
-// ─── SCROLL PROGRESS & ACTIVE DOT ────────────
+// ─── SCROLL PROGRESS (transform only) ────────
+let ticking = false;
 function updateScrollUI() {
+  ticking = false;
+  if (!progressFill) return;
   const maxScroll = html.scrollHeight - window.innerHeight;
-  const pct = maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0;
-  progressFill.style.width = pct.toFixed(2) + '%';
-
-  // Active section = the one crossing the middle of the viewport
-  const mid = window.innerHeight / 2;
-  let idx = 0;
-  panels.forEach((p, i) => {
-    if (p.getBoundingClientRect().top <= mid) idx = i;
-  });
-  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+  const ratio = maxScroll > 0 ? window.scrollY / maxScroll : 0;
+  progressFill.style.transform = `scaleX(${Math.min(1, Math.max(0, ratio)).toFixed(4)})`;
 }
-
-window.addEventListener('scroll', updateScrollUI, { passive: true });
-window.addEventListener('resize', updateScrollUI);
-
-// ─── REVEAL SECTIONS ON SCROLL ───────────────
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.15 });
-
-panels.forEach((p) => revealObserver.observe(p));
-
-// ─── PROJECT CAROUSEL BUTTONS ────────────────
-// One carousel per project group ([data-carousel])
-document.querySelectorAll('[data-carousel]').forEach((group) => {
-  const wrap   = group.querySelector('.projects-carousel-wrap');
-  const scroll = group.querySelector('.projects-scroll');
-  if (!wrap || !scroll) return;
-
-  // Step = one card width + gap (measured, so it also works at mobile card widths)
-  function step() {
-    const card = scroll.querySelector('.project-card');
-    const gap  = parseFloat(getComputedStyle(scroll).columnGap) || 0;
-    return card ? card.offsetWidth + gap : 300;
-  }
-
-  function updateFades() {
-    const { scrollLeft, scrollWidth, clientWidth } = scroll;
-    wrap.classList.toggle('can-scroll-left',  scrollLeft > 1);
-    wrap.classList.toggle('can-scroll-right', scrollLeft < scrollWidth - clientWidth - 1);
-  }
-
-  scroll.addEventListener('scroll', updateFades, { passive: true });
-  window.addEventListener('resize', updateFades, { passive: true });
-  updateFades(); // set initial state
-
-  group.querySelectorAll('.carousel-btn[data-dir]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      scroll.scrollBy({ left: step() * Number(btn.dataset.dir), behavior: 'smooth' });
-    });
-  });
-});
+function onScroll() {
+  if (!ticking) { ticking = true; requestAnimationFrame(updateScrollUI); }
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+window.addEventListener('resize', onScroll);
 
 // ─── JUMP TO PANEL ───────────────────────────
 function scrollToPanel(index) {
   if (panels[index]) panels[index].scrollIntoView({ behavior: 'smooth' });
 }
-
-// Expose globally for onclick handlers in HTML
+// Exposed globally for the onclick handlers in the HTML
 window.scrollToPanel = scrollToPanel;
 
 // ─── THEME TOGGLE ────────────────────────────
-const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
+let savedTheme = 'light';
+try { savedTheme = localStorage.getItem('portfolio-theme') || 'light'; } catch (e) { /* storage blocked */ }
 html.setAttribute('data-theme', savedTheme);
 
-themeToggle.addEventListener('click', () => {
-  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  html.setAttribute('data-theme', next);
-  localStorage.setItem('portfolio-theme', next);
-});
-
-// ─── CUSTOM CURSOR ───────────────────────────
-let mouseX = -100;
-let mouseY = -100;
-let cursorX = -100;
-let cursorY = -100;
-
-document.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-  cursorDot.style.left = mouseX + 'px';
-  cursorDot.style.top  = mouseY + 'px';
-});
-
-function animateCursor() {
-  cursorX = lerp(cursorX, mouseX, 0.12);
-  cursorY = lerp(cursorY, mouseY, 0.12);
-  cursor.style.left = cursorX + 'px';
-  cursor.style.top  = cursorY + 'px';
-  requestAnimationFrame(animateCursor);
+if (themeToggle) {
+  themeToggle.addEventListener('click', () => {
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    try { localStorage.setItem('portfolio-theme', next); } catch (e) { /* storage blocked */ }
+  });
 }
 
-// Hover effect on interactive elements
-const hoverTargets = 'a, button, .project-card';
-
-document.addEventListener('mouseover', (e) => {
-  if (e.target.closest(hoverTargets)) {
-    document.body.classList.add('cursor-hover');
-  }
-});
-
-document.addEventListener('mouseout', (e) => {
-  if (e.target.closest(hoverTargets)) {
-    document.body.classList.remove('cursor-hover');
-  }
-});
-
-// Hide cursor when mouse leaves window
-document.addEventListener('mouseleave', () => {
-  cursor.style.opacity    = '0';
-  cursorDot.style.opacity = '0';
-});
-
-document.addEventListener('mouseenter', () => {
-  cursor.style.opacity    = '1';
-  cursorDot.style.opacity = '1';
-});
-
-
-// ─── CAREER TIMELINE MODAL ───────────────────
+// ─── CAREER DETAIL CELL ──────────────────────
 const careerData = [
   [
     'Built PowerApps for SE Asia drilling & measurement forecasting',
@@ -173,26 +73,39 @@ const careerData = [
 ];
 
 (function () {
-  const modal     = document.getElementById('tlModal');
-  const modalList = document.getElementById('tlModalList');
-  const tlItems   = document.querySelectorAll('.tl-item');
-  if (!modal) return;
+  const modal      = document.getElementById('tlModal');
+  const modalList  = document.getElementById('tlModalList');
+  const modalTitle = document.getElementById('tlModalTitle');
+  const tlItems    = document.querySelectorAll('.tl-item');
+  if (!modal || !modalList) return;
+
+  function show(item) {
+    const idx   = parseInt(item.dataset.index, 10);
+    const lines = careerData[idx] || [];
+    modalList.replaceChildren(...lines.map((t) => {
+      const li = document.createElement('li');
+      li.textContent = t;
+      return li;
+    }));
+    if (modalTitle) {
+      const role    = item.querySelector('.tl-role');
+      const company = item.querySelector('.tl-company');
+      const roleText = role ? role.firstChild.textContent.trim() : '';
+      modalTitle.textContent = company ? `${roleText}, ${company.textContent.trim()}` : roleText;
+    }
+    tlItems.forEach((el) => {
+      const on = el === item;
+      el.setAttribute('aria-pressed', String(on));
+      el.classList.toggle('tl-item--active', on);
+    });
+  }
 
   tlItems.forEach((item) => {
-    item.addEventListener('mouseenter', () => {
-      const idx   = parseInt(item.dataset.index, 10);
-      const lines = careerData[idx] || [];
-      modalList.innerHTML = lines.map(t => `<li>${t}</li>`).join('');
-      modal.classList.add('visible');
-    });
-
-    item.addEventListener('mouseleave', () => {
-      modal.classList.remove('visible');
-    });
+    item.addEventListener('mouseenter', () => show(item));
+    item.addEventListener('focus', () => show(item));
+    item.addEventListener('click', () => show(item));
   });
 })();
 
 // ─── INIT ────────────────────────────────────
-panels[0].classList.add('visible');
 updateScrollUI();
-animateCursor();
